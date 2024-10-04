@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Virtualenv
+.venv/
+venv/
+
+# Flet e outros frameworks
+assets/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Outros arquivos temporários
+*.tmp
+*.bak
+*.swp
+*.lock
+*.xml
