@@ -7,8 +7,9 @@ def ScorePage(page: ft.Page):
     questions = page.session.get("questions")
 
     if not score_data or not questions:
-        page.go('/questions')
-        page.snack_bar = ft.SnackBar(ft.Text("Por favor, responda as perguntas antes de ver sua pontuação."))
+        page.go('/quiz')
+        page.snack_bar = ft.SnackBar(
+            ft.Text("Por favor, responda as perguntas antes de ver sua pontuação."))
         page.snack_bar.open = True
         return ft.Container()
 
@@ -36,19 +37,17 @@ def ScorePage(page: ft.Page):
             resultado_cor = ft.colors.RED
 
         detailed_results.append(
-            ft.Row(
-                controls=[ft.Text(f"{idx}. {pergunta_texto}", size=16, weight=ft.FontWeight.BOLD)],
-                vertical_alignment=ft.CrossAxisAlignment.START,
+            ft.Column(
+                controls=[
+                    ft.Text(f"{idx}. {pergunta_texto}",
+                            size=16, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Sua resposta: {
+                            user_answer.upper()}", color=ft.colors.BLUE),
+                    ft.Text(f"Resultado: {resultado}", color=resultado_cor),
+                    ft.Divider(),
+                ]
             )
         )
-        detailed_results.append(
-            ft.Row(
-                controls=[ft.Text(f"Sua resposta: {user_answer.upper()}", color=resultado_cor),
-                          ft.Text(resultado, color=resultado_cor)],
-                alignment=ft.MainAxisAlignment.START,
-            )
-        )
-        detailed_results.append(ft.Divider())
 
     score_text = ft.Text(
         f"Você acertou {respostas_corretas} de {total_questions} perguntas!",
@@ -66,7 +65,8 @@ def ScorePage(page: ft.Page):
 
     def exportar_pdf(e):
         export_score_pdf(score_data, questions, "resultado_quiz.pdf")
-        page.snack_bar = ft.SnackBar(ft.Text("Resultados exportados como PDF com sucesso!"))
+        page.snack_bar = ft.SnackBar(
+            ft.Text("Resultados exportados como PDF com sucesso!"))
         page.snack_bar.open = True
         page.update()
 
@@ -74,17 +74,21 @@ def ScorePage(page: ft.Page):
         text="Reiniciar Quiz",
         on_click=reiniciar_quiz,
         style=ft.ButtonStyle(
-            bgcolor={ft.ControlState.DEFAULT: ft.colors.GREEN_700, ft.ControlState.HOVERED: ft.colors.GREEN_900},
+            bgcolor=ft.colors.GREEN_700,
             color=ft.colors.WHITE,
             shape=ft.RoundedRectangleBorder(radius=6),
         )
     )
 
-    pdf_export_button = ft.IconButton(
+    pdf_export_button = ft.ElevatedButton(
+        text="Exportar PDF",
         icon=ft.icons.FILE_DOWNLOAD,
-        tooltip="Exportar resultados em PDF",
         on_click=exportar_pdf,
-        icon_color=ft.colors.BLUE,
+        style=ft.ButtonStyle(
+            bgcolor=ft.colors.BLUE,
+            color=ft.colors.WHITE,
+            shape=ft.RoundedRectangleBorder(radius=6),
+        )
     )
 
     return ft.Container(
