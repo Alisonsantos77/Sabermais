@@ -16,7 +16,6 @@ def ScorePage(page: ft.Page):
         page.snack_bar.open = True
         return ft.Container()
 
-    # Corrigir obtenção dos dados de pontuação e perguntas
     total_questions = score_data["total_perguntas"] if "total_perguntas" in score_data else len(
         questions)
     respostas_corretas = score_data["respostas_corretas"] if "respostas_corretas" in score_data else 0
