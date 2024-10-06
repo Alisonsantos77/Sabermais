@@ -7,11 +7,13 @@ from utils.score_calculator import calcular_perguntas
 def QuizPage(page: ft.Page):
     answer_instances = []
     questions = page.session.get("questions")
+    hints = page.session.get("hints")
 
     if not questions:
         page.go('/questions')
         page.snack_bar = ft.SnackBar(
-            ft.Text("Por favor, selecione um vídeo e gere as perguntas primeiro."))
+            ft.Text("Por favor, selecione um vídeo e gere as perguntas primeiro.")
+        )
         page.snack_bar.open = True
         return ft.Container()
 
@@ -22,10 +24,10 @@ def QuizPage(page: ft.Page):
 
     question_container = ft.Column()
 
-    # Renderiza as perguntas
-    renderizar_perguntas(questions, question_container, answer_instances, page)
+    # Renderiza as perguntas com suporte para dicas
+    renderizar_perguntas(questions, question_container,
+                         answer_instances, page, hints=hints)
 
-    # Botões de ação
     calcular_button = ft.ElevatedButton(
         text="Calcular Pontuação",
         on_click=lambda e: calcular_perguntas(e, answer_instances, page),
