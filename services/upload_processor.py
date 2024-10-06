@@ -19,12 +19,22 @@ async def processar_upload(page):
 
         perguntas_extraidas = extract_questions_from_text(perguntas_geradas)
         if perguntas_extraidas:
+            # Armazenar as perguntas, respostas, explicações e dicas
             page.session.set("questions", perguntas_extraidas)
+
+            # Verificando se cada pergunta contém as chaves 'dica' e 'explicacao'
+            page.session.set("explanations", [q.get(
+                'explicacao') for q in perguntas_extraidas])
+            page.session.set("hints", [q.get('dica')
+                             for q in perguntas_extraidas])
+
             show_notification_plyer(
-                "Sucesso", "A análise do vídeo foi concluída e as perguntas foram geradas!")
+                "Sucesso", "A análise do vídeo foi concluída, e as perguntas foram geradas com explicações e dicas!"
+            )
         else:
             show_notification_plyer(
-                "Erro", "Não foi possível extrair perguntas do vídeo.")
+                "Erro", "Não foi possível extrair perguntas e detalhes do vídeo."
+            )
 
     except Exception as e:
         show_notification_plyer("Erro no Processamento",
