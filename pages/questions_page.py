@@ -14,6 +14,7 @@ def QuestionPage(page: ft.Page):
         value="Nenhum arquivo selecionado",
         size=16,
         weight=ft.FontWeight.BOLD,
+        color=ft.colors.ON_SURFACE
     )
 
     # Configuração do FilePicker
@@ -21,6 +22,7 @@ def QuestionPage(page: ft.Page):
         e, page, wallpaper_container, selected_file))
     page.overlay.append(file_picker)
 
+    # Botão de selecionar arquivo
     select_file_button_control = ft.ElevatedButton(
         ref=select_file_button,
         text="Selecionar Arquivo",
@@ -28,12 +30,12 @@ def QuestionPage(page: ft.Page):
             allow_multiple=False, allowed_extensions=["mp4"]),
         style=ft.ButtonStyle(
             bgcolor={
-                ft.ControlState.DEFAULT: ft.colors.WHITE,
-                ft.ControlState.HOVERED: ft.colors.BLACK
+                ft.ControlState.DEFAULT: ft.colors.PRIMARY,
+                ft.ControlState.HOVERED: ft.colors.SECONDARY
             },
             color={
-                ft.ControlState.DEFAULT: ft.colors.BLACK,
-                ft.ControlState.HOVERED: ft.colors.WHITE,
+                ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
+                ft.ControlState.HOVERED: ft.colors.ON_SECONDARY,
             },
             elevation={"pressed": 0, "": 1},
             animation_duration=500,
@@ -45,6 +47,7 @@ def QuestionPage(page: ft.Page):
         await processar_upload(page)
         page.go('/quiz')
 
+    # Botão de execução
     submit_button_control = ft.ElevatedButton(
         ref=submit_button,
         text="Executar",
@@ -52,12 +55,12 @@ def QuestionPage(page: ft.Page):
         style=ft.ButtonStyle(
             padding=ft.padding.all(10),
             bgcolor={
-                ft.ControlState.DEFAULT: ft.colors.WHITE,
-                ft.ControlState.HOVERED: ft.colors.BLACK
+                ft.ControlState.DEFAULT: ft.colors.PRIMARY,
+                ft.ControlState.HOVERED: ft.colors.SECONDARY
             },
             color={
-                ft.ControlState.DEFAULT: ft.colors.BLACK,
-                ft.ControlState.HOVERED: ft.colors.WHITE,
+                ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
+                ft.ControlState.HOVERED: ft.colors.ON_SECONDARY,
             },
             elevation={"pressed": 0, "": 1},
             animation_duration=500,
@@ -72,7 +75,8 @@ def QuestionPage(page: ft.Page):
                 ft.Text(
                     "Estude o seu conhecimento com o Quiz!",
                     size=30,
-                    weight=ft.FontWeight.BOLD
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.colors.ON_BACKGROUND
                 ),
                 ft.Divider(),
                 ft.Container(
