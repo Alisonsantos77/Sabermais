@@ -1,14 +1,9 @@
-from plyer import notification
+def show_notification_plyer(title, message, max_length=100):
+    if message is None:
+        message = "Nenhuma mensagem disponível."
 
+    # Limitar a mensagem ao tamanho máximo, se necessário
+    display_message = (message[:max_length] +
+                       '...') if len(message) > max_length else message
 
-def show_notification_plyer(title, message):
-    max_length = 256
-    title = (title[:max_length] + '...') if len(title) > max_length else title
-    message = (message[:max_length] +
-               '...') if len(message) > max_length else message
-
-    notification.notify(
-        title=title,
-        message=message,
-        timeout=5
-    )
+    print(f"{title}: {display_message}")
