@@ -14,66 +14,61 @@ def setup_routes(page: ft.Page):
 
     def route_change(route):
         logger.info(f"Rota alterada para: {route}")
-        if page.route == "/home":
-            page.title = "Home - Painel"
-            page.views.clear()
-            page.views.append(
-                ft.View(
-                    vertical_alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    route='/home',
-                    controls=[HomePage(page)],
-                )
+        page.title = "Home - Saber+"
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                vertical_alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                route='/home',
+                controls=[HomePage(page)],
             )
-        elif page.route == "/questions":
-            page.title = "Questions - Painel"
-            page.views.clear()
+        )
+        if page.route == "/questions":
+            page.title = "Questions - Saber+"
             page.views.append(
                 ft.View(
                     route='/questions',
-                    appbar=ft.AppBar(title=ft.Text("Questions")),
+                    appbar=ft.AppBar(bgcolor=ft.colors.TRANSPARENT),
                     controls=[QuestionPage(page)],
+                    scroll=ft.ScrollMode.AUTO,
                     drawer=create_drawer(page),
                 )
             )
         elif page.route == "/quiz":
-            page.title = "Quiz - Painel"
-            page.views.clear()
+            page.title = "Quiz - Saber+"
             page.views.append(
                 ft.View(
                     route='/quiz',
-                    appbar=ft.AppBar(title=ft.Text("Quiz")),
+                    appbar=ft.AppBar(bgcolor=ft.colors.TRANSPARENT),
                     controls=[QuizPage(page)],
                     scroll=ft.ScrollMode.AUTO,
                     drawer=create_drawer(page),
                 )
             )
         elif page.route == "/about":
-            page.title = "About - Painel"
-            page.views.clear()
+            page.title = "About - Saber+"
             page.views.append(
                 ft.View(
                     route='/about',
-                    appbar=ft.AppBar(title=ft.Text("About")),
+                    appbar=ft.AppBar(bgcolor=ft.colors.TRANSPARENT),
                     controls=[AboutPage(page)],
                     drawer=create_drawer(page),
                 )
             )
         elif page.route == "/score":
-            page.title = "Score - Painel"
-            page.views.clear()
+            page.title = "Score - Saber+"
             page.views.append(
                 ft.View(
                     route='/score',
                     appbar=ft.AppBar(title=ft.Text("Score")),
                     controls=[ScorePage(page)],
-                    scroll=ft.ScrollMode.AUTO,  # Adicionando rolagem para grandes resultados
+                    scroll=ft.ScrollMode.AUTO,
                     drawer=create_drawer(page),
                 )
             )
-        else:
-            logger.warning(f"Rota desconhecida: {
-                           route}, redirecionando para 404")
+        elif route == "/404":
+            logger.warning(f"Rota desconhecida: {route}, redirecionando para 404")
             page.views.clear()
             page.views.append(
                 ft.View(
@@ -99,7 +94,7 @@ def setup_routes(page: ft.Page):
     page.on_view_pop = view_pop
 
     if not page.route:
-        logger.info("Nenhuma rota especificada, redirecionando para /home")
-        page.go('/home')
+        logger.info("Nenhuma rota especificada")
+        page.go('/404')
     else:
         route_change(page.route)
