@@ -17,10 +17,14 @@ def QuizPage(page: ft.Page):
         page.snack_bar.open = True
         return ft.Container()
 
+
     def reiniciar_quiz(e):
         for idx in range(1, len(questions) + 1):
-            page.session.remove(f"resposta_pergunta_{idx}")
-        page.go('/questions')
+            key = f"resposta_pergunta_{idx}"
+            # Verifica se a chave existe usando o método get
+            if page.session.get(key) is not None:
+                page.session.remove(key)
+        page.go("/questions")
 
     question_container = ft.Column()
 
