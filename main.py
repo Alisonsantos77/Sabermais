@@ -1,45 +1,19 @@
 from loguru import logger
 import flet as ft
 from routes import setup_routes
+from utils.theme_utils import DarkVideoQTheme, RelaxVideoQTheme
+from utils.notifications import show_notification, icon_path
 
 
-def DarkVideoQTheme():
-    return ft.Theme(
-        color_scheme=ft.ColorScheme(
-            primary="#3A015C",
-            on_primary="#FFFFFF",
-            background="#11001C",
-            surface="#4F0147",
-            on_surface="#FFFFFF",
-            secondary="#290025",
-            on_secondary="#FFFFFF",
-        )
-    )
-
-
-def RelaxVideoQTheme():
-    return ft.Theme(
-        color_scheme=ft.ColorScheme(
-            primary="#6C9A8B",
-            on_primary="#FFFFFF",
-            background="#FBF7F4",
-            surface="#EED2CC",
-            on_surface="#A1683A",
-            secondary="#E8998D",
-            on_secondary="#FFFFFF",
-        )
-    )
-
-
-def toggle_theme(page: ft.Page, theme_mode):
+def toggle_theme(page: ft.Page, theme_mode: ft.ThemeMode):
     if theme_mode == ft.ThemeMode.DARK:
         page.theme = DarkVideoQTheme()
+        logger.info("Tema: Dark")
     else:
         page.theme = RelaxVideoQTheme()
+        logger.info("Tema: Light")
     page.theme_mode = theme_mode
-    # Armazena a preferência do tema na sessão
-    page.session.set("theme_mode", theme_mode.value)
-    logger.info(f"Tema alterado para: {theme_mode}")
+    page.client_storage.set("theme_mode", theme_mode.name)
     page.update()
 
 
@@ -48,24 +22,36 @@ logger.add("logs/app.log", format="{time} {level} {message}",
 
 
 def main(page: ft.Page):
-    logger.info("Aplicação iniciada")
+    logger.info("saber+ iniciado")
+    show_notification(page, "Título da Notificação", "Mensagem da notificação", icon_path)
 
-    # Carregar o tema da sessão, se houver
-    theme_mode_value = page.session.get("theme_mode")
+    theme_mode_value = page.client_storage.get("theme_mode")
     if theme_mode_value:
-        theme_mode = ft.ThemeMode(theme_mode_value)
-        toggle_theme(page, theme_mode)
-        logger.info(f"Tema carregado da sessão: {theme_mode}")
+        try:
+            theme_mode = ft.ThemeMode[theme_mode_value]
+            toggle_theme(page, theme_mode)
+        except KeyError:
+            toggle_theme(page, ft.ThemeMode.LIGHT)
     else:
-        page.theme_mode = ft.ThemeMode.SYSTEM
-        logger.info(
-            "Nenhuma preferência de tema na sessão, usando o padrão SYSTEM")
+        toggle_theme(page, ft.ThemeMode.LIGHT)
 
-    page.title = "Painel Alison dev"
+    page.title = "saber+"
 
-    # Função para eventos de teclado
+    def alternar_tema(e):
+        current_theme = page.client_storage.get("theme_mode") or "LIGHT"
+        new_theme_mode = ft.ThemeMode.LIGHT if current_theme == "DARK" else ft.ThemeMode.DARK
+        toggle_theme(page, new_theme_mode)
+
+    shd = ft.ShakeDetector(
+        minimum_shake_count=2,
+        shake_slop_time_ms=300,
+        shake_count_reset_time_ms=1000,
+        on_shake=lambda _: print("SHAKE DETECTED!"),
+    )
+    page.overlay.append(shd)
+
     def on_key_event(e: ft.KeyboardEvent):
-        logger.info(f"Evento de teclado: {e.key}")
+        logger.info(f"Tecla: {e.key}")
         if e.key == "F1":
             page.go('/home')
         elif e.key == "F2":
@@ -76,13 +62,8 @@ def main(page: ft.Page):
             page.go('/score')
         elif e.key == "F5":
             page.go('/quiz')
-        elif e.key.lower() == "t":
-            # Alternar entre os temas
-            if page.theme_mode == ft.ThemeMode.DARK:
-                new_theme_mode = ft.ThemeMode.LIGHT
-            else:
-                new_theme_mode = ft.ThemeMode.DARK
-            toggle_theme(page, new_theme_mode)
+        elif e.key.lower() == "t" or shd:
+            alternar_tema(None)
 
     page.on_keyboard_event = on_key_event
 
@@ -91,5 +72,5 @@ def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    logger.info("Inicializando a aplicação")
+    logger.info("Inicializando saber+")
     ft.app(target=main, assets_dir='assets')
