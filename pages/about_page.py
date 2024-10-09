@@ -10,7 +10,7 @@ def AboutPage(page: ft.Page):
                     "Sobre",
                     size=30,
                     weight=ft.FontWeight.BOLD,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.PRIMARY
                 ),
                 ft.Text(
                     "Este aplicativo foi pensado para você que está estudando para o vestibular e quer otimizar seu tempo. "
@@ -18,13 +18,13 @@ def AboutPage(page: ft.Page):
                     "estilo vestibular com base no que foi apresentado. Fácil, prático e eficiente!",
                     size=16,
                     text_align=ft.TextAlign.JUSTIFY,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.ON_SECONDARY
                 ),
                 ft.Text(
                     "Desenvolvido por: Alison Santos",
                     size=16,
                     weight=ft.FontWeight.BOLD,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.PRIMARY
                 ),
                 ft.Text(
                     "Sou Alison, programador especializado em backend (mas não me perco no frontend). Trabalho como "
@@ -32,26 +32,26 @@ def AboutPage(page: ft.Page):
                     "agora focado em Flet, estou sempre buscando maneiras de agregar valor ao dia a dia das pessoas.",
                     size=16,
                     text_align=ft.TextAlign.JUSTIFY,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.ON_SECONDARY
                 ),
                 ft.Text(
                     "Se quiser bater um papo ou conhecer mais sobre meu trabalho, é só usar os links abaixo. Vamos "
                     "trocar uma ideia!",
                     size=16,
                     text_align=ft.TextAlign.JUSTIFY,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.ON_SECONDARY
                 ),
                 ft.Text(
                     "Contatos:",
                     size=18,
                     weight=ft.FontWeight.BOLD,
-                    color=ft.colors.ON_BACKGROUND
+                    color=ft.colors.PRIMARY
                 ),
                 ft.Row(
                     controls=[
                         ft.IconButton(
                             content=ft.Image(
-                                src='images/whatsapp-logo.png',
+                                src='images/contact/icons8-whatsapp-48.png',
                                 width=40,
                                 height=40
                             ),
@@ -61,13 +61,13 @@ def AboutPage(page: ft.Page):
                             style=ft.ButtonStyle(
                                 overlay_color={
                                     "": ft.colors.TRANSPARENT,
-                                    "hovered": ft.colors.SECONDARY
+                                    "hovered": ft.colors.GREEN
                                 },
                             ),
                         ),
                         ft.IconButton(
                             content=ft.Image(
-                                src='images/microsoft-outlook-logo.png',
+                                src='images/contact/outlook-logo.png',
                                 width=40,
                                 height=40
                             ),
@@ -77,29 +77,28 @@ def AboutPage(page: ft.Page):
                             style=ft.ButtonStyle(
                                 overlay_color={
                                     "": ft.colors.TRANSPARENT,
-                                    "hovered": ft.colors.SECONDARY
+                                    "hovered": ft.colors.BLUE
                                 },
                             ),
                         ),
                         ft.IconButton(
                             content=ft.Image(
-                                src='images/linkedin-logo.png',
+                                src='images/contact/icons8-linkedin-48.png',
                                 width=40,
                                 height=40
                             ),
-                            icon_color=ft.colors.PRIMARY,
                             tooltip="Acessar LinkedIn",
                             url="https://www.linkedin.com/in/alisonsantosdev",
                             style=ft.ButtonStyle(
                                 overlay_color={
                                     "": ft.colors.TRANSPARENT,
-                                    "hovered": ft.colors.SECONDARY
+                                    "hovered": ft.colors.BLUE
                                 },
                             ),
                         ),
                         ft.IconButton(
                             content=ft.Image(
-                                src='images/github-logo.png',
+                                src='images/contact/icons8-github-64.png',
                                 width=40,
                                 height=40
                             ),
@@ -109,7 +108,7 @@ def AboutPage(page: ft.Page):
                             style=ft.ButtonStyle(
                                 overlay_color={
                                     "": ft.colors.TRANSPARENT,
-                                    "hovered": ft.colors.SECONDARY
+                                    "hovered": ft.colors.GREY
                                 },
                             ),
                         ),
