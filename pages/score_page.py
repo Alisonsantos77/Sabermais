@@ -1,5 +1,4 @@
 import flet as ft
-from services.pdf_export import export_score_pdf
 
 
 def ScorePage(page: ft.Page):
@@ -16,8 +15,7 @@ def ScorePage(page: ft.Page):
         page.snack_bar.open = True
         return ft.Container()
 
-    total_questions = score_data["total_perguntas"] if "total_perguntas" in score_data else len(
-        questions)
+    total_questions = score_data["total_perguntas"] if "total_perguntas" in score_data else len(questions)
     respostas_corretas = score_data["respostas_corretas"] if "respostas_corretas" in score_data else 0
 
     detailed_results = []
@@ -31,12 +29,11 @@ def ScorePage(page: ft.Page):
         else:
             user_answer = user_answer.strip().lower()
 
-        explanation = explanations[idx - 1] if explanations and len(
-            explanations) >= idx else "Nenhuma explicação disponível."
+        explanation = explanations[idx - 1] if explanations and len(explanations) >= idx else "Nenhuma explicação disponível."
 
         if user_answer == resposta_correta:
             resultado = "✅ Correta"
-            resultado_cor = ft.colors.PRIMARY
+            resultado_cor = ft.colors.ON_SECONDARY
         elif user_answer == "não respondida":
             resultado = "⚠️ Não Respondida"
             resultado_cor = ft.colors.SECONDARY
@@ -47,13 +44,10 @@ def ScorePage(page: ft.Page):
         detailed_results.append(
             ft.Column(
                 controls=[
-                    ft.Text(f"{idx}. {pergunta_texto}", size=16,
-                            weight=ft.FontWeight.BOLD, color=ft.colors.ON_BACKGROUND),
-                    ft.Text(f"Sua resposta: {
-                            user_answer.upper()}", color=ft.colors.ON_BACKGROUND),
+                    ft.Text(f"{idx}. {pergunta_texto}", size=16,weight=ft.FontWeight.BOLD, color=ft.colors.ON_SECONDARY),
+                    ft.Text(f"Sua resposta: {user_answer.upper()}", color=ft.colors.ON_SECONDARY),
                     ft.Text(f"Resultado: {resultado}", color=resultado_cor),
-                    ft.Text(f"Explicação: {explanation}",
-                            color=ft.colors.ON_BACKGROUND),
+                    ft.Text(f"Explicação: {explanation}", color=ft.colors.ON_SECONDARY),
                     ft.Divider(),
                 ]
             )
@@ -73,8 +67,7 @@ def ScorePage(page: ft.Page):
 
     historico_detailed_results = [
         ft.ListTile(
-            title=ft.Text(f"Tentativa {idx + 1}: {item['respostas_corretas']} de {
-                          item['total_perguntas']} perguntas corretas."),
+            title=ft.Text(f"Tentativa {idx + 1}: {item['respostas_corretas']} de { item['total_perguntas']} perguntas corretas."),
             subtitle=ft.Text(f"Feedback: {item['feedback']}")
         ) for idx, item in enumerate(historico_pontuacoes)
     ]
@@ -82,7 +75,7 @@ def ScorePage(page: ft.Page):
     historico_section = ft.Column(
         controls=[
             ft.Text("Histórico de Pontuações", size=20,
-                    weight=ft.FontWeight.BOLD),
+                    weight=ft.FontWeight.BOLD, color=ft.colors.ON_SECONDARY),
             ft.ListView(
                 controls=historico_detailed_results,
                 padding=ft.padding.all(10),
@@ -98,14 +91,6 @@ def ScorePage(page: ft.Page):
         page.session.remove("score")
         page.go('/questions')
 
-    def exportar_pdf(e):
-        export_score_pdf(score_data, questions, "resultado_quiz.pdf")
-        page.snack_bar = ft.SnackBar(
-            ft.Text("Resultados exportados como PDF com sucesso!"),
-            bgcolor=ft.colors.PRIMARY
-        )
-        page.snack_bar.open = True
-        page.update()
 
     restart_button = ft.ElevatedButton(
         text="Reiniciar Quiz",
@@ -120,7 +105,7 @@ def ScorePage(page: ft.Page):
     pdf_export_button = ft.ElevatedButton(
         text="Exportar PDF",
         icon=ft.icons.FILE_DOWNLOAD,
-        on_click=exportar_pdf,
+        on_click=lambda _: print("Pdf export clicado"),
         style=ft.ButtonStyle(
             bgcolor=ft.colors.PRIMARY,
             color=ft.colors.ON_PRIMARY,

@@ -1,4 +1,4 @@
-from utils.notifications import show_notification_plyer
+from utils.notifications import show_notification, icon_path
 
 
 def calcular_perguntas(e, answer_instances, page):
@@ -12,15 +12,12 @@ def calcular_perguntas(e, answer_instances, page):
     if respostas_corretas == total_perguntas:
         feedback = "🎉 Parabéns, você acertou todas!"
     elif respostas_corretas > total_perguntas / 2:
-        feedback = f"👏 Bom trabalho! Você acertou {
-            respostas_corretas} de {total_perguntas}."
+        feedback = f"👏 Bom trabalho! Você acertou {respostas_corretas} de {total_perguntas}."
     else:
-        feedback = f"⚠️ Você acertou {respostas_corretas} de {
-            total_perguntas}. Continue praticando!"
-
+        feedback = f"⚠️ Você acertou {respostas_corretas} de {total_perguntas}. Continue praticando!"
 
     feedback = feedback if feedback else "Resultado não disponível."
-    show_notification_plyer("Resultado do Quiz", feedback)
+    show_notification(page, "Resultado do Quiz", feedback, icon_path=icon_path)
 
     # Salvar a pontuação na sessão
     score_data = {
@@ -43,12 +40,10 @@ def calcular_perguntas(e, answer_instances, page):
     # Salvar a pontuação atual
     page.session.set("score", score_data)
 
-    # Redirecionar para a página de resultados e exibir explicações
     page.go('/score')
 
-    # Exibir explicações detalhadas sobre cada pergunta
+    # Exibir explicações sobre cada pergunta
     explanations = page.session.get("explanations")
     if explanations:
         for idx, explanation in enumerate(explanations, start=1):
-            show_notification_plyer(
-                f"Explicação da Pergunta {idx}", explanation)
+            show_notification(page, f"Explicação da Pergunta {idx}", explanation, icon_path=icon_path)

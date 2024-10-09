@@ -60,7 +60,12 @@ def QuizPage(page: ft.Page):
             controls=[
                 ft.Text("Quiz", size=30, weight=ft.FontWeight.BOLD),
                 ft.Divider(),
-                question_container,
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=question_container,
+                            col=10,
+                        )]),
             ],
             scroll=ft.ScrollMode.AUTO,
         )
