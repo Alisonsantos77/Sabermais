@@ -2,66 +2,86 @@ import flet as ft
 import asyncio
 from components.file_picker_handler import on_file_picker_result
 from services.upload_processor import processar_upload
-from utils.notifications import show_notification_plyer
+from utils.notifications import show_notification, icon_path
 
 
 def QuestionPage(page: ft.Page):
-    wallpaper_container = ft.Ref[ft.Container]()
+    mascote = ft.Ref[ft.Image]()
     select_file_button = ft.Ref[ft.ElevatedButton]()
     submit_button = ft.Ref[ft.ElevatedButton]()
 
     selected_file = ft.Text(
-        value="Nenhum arquivo selecionado",
+        value="Pronto para a aventura? Escolha seu arquivo e vamos lá!",
         size=16,
         weight=ft.FontWeight.BOLD,
-        color=ft.colors.ON_SURFACE
+        color=ft.colors.PRIMARY,
     )
 
-    # Configuração do FilePicker
     file_picker = ft.FilePicker(on_result=lambda e: on_file_picker_result(
-        e, page, wallpaper_container, selected_file))
+        e, page, mascote, selected_file))
     page.overlay.append(file_picker)
 
-    # Botão de selecionar arquivo
     select_file_button_control = ft.ElevatedButton(
         ref=select_file_button,
         text="Selecionar Arquivo",
-        on_click=lambda _: file_picker.pick_files(
-            allow_multiple=False, allowed_extensions=["mp4"]),
+        icon=ft.icons.FILE_OPEN,
+        on_click=lambda _: [file_picker.pick_files(
+            allow_multiple=False, allowed_extensions=["mp4", ".mov", ".avi", ".mkv"],
+            dialog_title="Sele "
+        )],
         style=ft.ButtonStyle(
-            bgcolor={
-                ft.ControlState.DEFAULT: ft.colors.PRIMARY,
-                ft.ControlState.HOVERED: ft.colors.SECONDARY
-            },
-            color={
-                ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
-                ft.ControlState.HOVERED: ft.colors.ON_SECONDARY,
-            },
+            bgcolor={ft.ControlState.DEFAULT: ft.colors.PRIMARY,
+                     ft.ControlState.HOVERED: ft.colors.SECONDARY},
+            color={ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
+                   ft.ControlState.HOVERED: ft.colors.ON_SECONDARY},
             elevation={"pressed": 0, "": 1},
             animation_duration=500,
             shape=ft.RoundedRectangleBorder(radius=6),
         )
     )
 
+    hf = ft.HapticFeedback()
+    page.overlay.append(hf)
+
     async def on_confirm_upload(e):
-        await processar_upload(page)
+        submit_button.current.disabled = True
+        select_file_button.current.disabled = True
+        submit_button.current.text = "Processando..."
+        select_file_button.current.update()
+        submit_button.current.update()
+        try:
+            await processar_upload(page)
+        except Exception as e:
+            if page.platform == "WINDOWS":
+                show_notification(page, "Erro ao processar upload{e}", icon_path)
+            elif page.platform == "ANDROID" or page.platform == "IOS":
+                hf.heavy_impact()
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Erro ao processar upload{e}"),
+                    bgcolor=ft.colors.AMBER_400
+                )
+            page.snack_bar.open = True
+            page.update()
+            print(f"Erro ao processar upload: {e}")
+            return
+        submit_button.current.disabled = False
+        select_file_button.current.disabled = False
+        submit_button.current.text = "Executar"
+        submit_button.current.update()
+        select_file_button.current.update()
         page.go('/quiz')
 
-    # Botão de execução
     submit_button_control = ft.ElevatedButton(
         ref=submit_button,
         text="Executar",
+        icon=ft.icons.PLAY_CIRCLE_FILL,
         on_click=on_confirm_upload,
         style=ft.ButtonStyle(
             padding=ft.padding.all(10),
-            bgcolor={
-                ft.ControlState.DEFAULT: ft.colors.PRIMARY,
-                ft.ControlState.HOVERED: ft.colors.SECONDARY
-            },
-            color={
-                ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
-                ft.ControlState.HOVERED: ft.colors.ON_SECONDARY,
-            },
+            bgcolor={ft.ControlState.DEFAULT: ft.colors.PRIMARY,
+                     ft.ControlState.HOVERED: ft.colors.SECONDARY},
+            color={ft.ControlState.DEFAULT: ft.colors.ON_PRIMARY,
+                   ft.ControlState.HOVERED: ft.colors.ON_SECONDARY},
             elevation={"pressed": 0, "": 1},
             animation_duration=500,
             shape=ft.RoundedRectangleBorder(radius=6),
@@ -71,35 +91,56 @@ def QuestionPage(page: ft.Page):
     return ft.Container(
         padding=20,
         content=ft.Column(
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Text(
-                    "Estude o seu conhecimento com o Quiz!",
-                    size=30,
-                    weight=ft.FontWeight.BOLD,
-                    color=ft.colors.ON_BACKGROUND
+                    "Olá! Sou Quizzly",
+                    style=(
+                        ft.TextStyle(weight=ft.FontWeight.BOLD,
+                                     size=30, color=ft.colors.PRIMARY)
+                    )
+                ),
+                ft.Text(
+                    "Vejo que você quer dar uma olhada no seu vídeo.",
+                    style=(
+                        ft.TextStyle(weight=ft.FontWeight.W_600,
+                                     size=16, color=ft.colors.PRIMARY)
+                    )
                 ),
                 ft.Divider(),
                 ft.Container(
-                    ref=wallpaper_container,
-                    image=ft.Image(
-                        src='https://images8.alphacoders.com/136/1363709.png',
-                        fit=ft.ImageFit.COVER
+                    content=ft.Image(
+                        ref=mascote,
+                        src="/images/mascote/acenando_frente.png",
+                        fit=ft.ImageFit.CONTAIN,
+                        height=300,
+                        width=300,
                     ),
-                    height=300,
-                    expand=True,
-                    alignment=ft.alignment.center,
                 ),
-                ft.Row(
+                ft.ResponsiveRow(
+                    vertical_alignment=ft.CrossAxisAlignment.STRETCH,
                     controls=[
-                        select_file_button_control,
-                        submit_button_control,
+                        ft.Container(
+                            selected_file,
+                            alignment=ft.alignment.center,
+                            padding=5,
+                            col=12,
+                        ),
+                        ft.Container(
+                            content=select_file_button_control,
+                            padding=5,
+                            col={"sm": 12, "md": 6, "xl": 4},
+                        ),
+                        ft.Container(
+                            submit_button_control,
+                            padding=5,
+                            col={"sm": 12, "md": 6, "xl": 4},
+                        ),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                selected_file,
             ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=20,
         )
     )
