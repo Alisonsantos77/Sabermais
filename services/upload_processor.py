@@ -1,17 +1,44 @@
 import asyncio
 from services.ia_service import gerar_perguntas
 from services.extract_text_response import extract_questions_from_text
-from utils.notifications import show_notification_plyer
+from utils.notifications import show_notification, icon_path
+import flet as ft
 
 
 async def processar_upload(page):
+    hf = ft.HapticFeedback()
+    page.overlay.append(hf)
     video_path = page.session.get("video_path")
-    if not video_path:
-        show_notification_plyer("Erro", "Nenhum vídeo foi selecionado.")
-        return
 
-    show_notification_plyer("Processamento em Andamento",
-                            "A IA está analisando o vídeo, por favor aguarde...")
+    if not video_path:
+        if page.platform == "WINDOWS":
+            show_notification(page, "Erro", "Nenhum vídeo foi selecionado.", icon_path=icon_path
+            )
+        elif page.platform in ["ANDROID", "IOS"]:
+            hf.light_impact()
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"Erro ao processar upload{e}"),
+                bgcolor=ft.colors.ON_SURFACE
+            )
+        page.snack_bar.open = True
+        page.update()
+
+    if page.platform == "WINDOWS":
+        show_notification(
+            page,
+            "Processamento em Andamento",
+            "A IA está analisando o vídeo, por favor aguarde...",
+            icon_path=icon_path
+        )
+    elif page.platform in ["ANDROID", "IOS"]:
+        hf.light_impact()
+        page.snack_bar = ft.SnackBar(
+            content=ft.Text(
+                "Processamento em Andamento, por favor aguarde..."),
+            bgcolor=ft.colors.ON_SURFACE
+        )
+        page.snack_bar.open = True
+        page.update()
 
     try:
         loop = asyncio.get_event_loop()
@@ -25,17 +52,49 @@ async def processar_upload(page):
             # Verificando se cada pergunta contém as chaves 'dica' e 'explicacao'
             page.session.set("explanations", [q.get(
                 'explicacao') for q in perguntas_extraidas])
-            page.session.set("hints", [q.get('dica')
-                             for q in perguntas_extraidas])
+            page.session.set("hints", [q.get('dica') for q in perguntas_extraidas])
 
-            show_notification_plyer(
-                "Sucesso", "A análise do vídeo foi concluída, e as perguntas foram geradas com explicações e dicas!"
-            )
-        else:
-            show_notification_plyer(
-                "Erro", "Não foi possível extrair perguntas e detalhes do vídeo."
-            )
-
+            # Notificação de sucesso
+            if page.platform == "WINDOWS":
+                show_notification(
+                    page,
+                    "Sucesso", "A análise do vídeo foi concluída, e as perguntas foram geradas com explicações e dicas!",
+                    icon_path=icon_path
+                )
+            elif page.platform in ["ANDROID", "IOS"]:
+                hf.light_impact()
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(
+                        "A análise do vídeo foi concluída, e as perguntas foram geradas com explicações e dicas!"),
+                    bgcolor=ft.colors.ON_SURFACE
+                )
+                page.snack_bar.open = True
+                page.update()
+            else:
+                # Notificação de erro
+                if page.platform == "WINDOWS":
+                    show_notification(
+                        page,
+                        "Erro", "Não foi possível extrair perguntas e detalhes do vídeo.",
+                        icon_path=icon_path
+                    )
+                elif page.platform in ["ANDROID", "IOS"]:
+                    hf.light_impact()
+                    page.snack_bar = ft.SnackBar(
+                        content=ft.Text(
+                            "Não foi possível extrair perguntas e detalhes do vídeo."),
+                        bgcolor=ft.colors.ON_SURFACE
+                    )
+                    page.snack_bar.open = True
+                    page.update()
     except Exception as e:
-        show_notification_plyer("Erro no Processamento",
-                                f"Erro inesperado: {e}")
+        if page.platform == "WINDOWS":
+            show_notification(page, f"Erro inesperado: {e}", icon_path=icon_path)
+        elif page.platform in ["ANDROID", "IOS"]:
+            hf.heavy_impact()
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"Erro inesperado: {e}"),
+                bgcolor=ft.colors.ON_SURFACE
+            )
+            page.snack_bar.open = True
+            page.update()
