@@ -7,8 +7,8 @@ from utils.notifications import show_notification, icon_path
 
 def QuestionPage(page: ft.Page):
     mascote = ft.Ref[ft.Image]()
-    select_file_button = ft.Ref[ft.ElevatedButton]()
-    submit_button = ft.Ref[ft.ElevatedButton]()
+    select_file_button_rf = ft.Ref[ft.ElevatedButton]()
+    submit_button_rf = ft.Ref[ft.ElevatedButton]()
 
     selected_file = ft.Text(
         value="Pronto para a aventura? Escolha seu arquivo e vamos lá!",
@@ -23,7 +23,7 @@ def QuestionPage(page: ft.Page):
     page.overlay.append(file_picker)
 
     select_file_button_control = ft.ElevatedButton(
-        ref=select_file_button,
+        ref=select_file_button_rf,
         text="Selecionar Arquivo",
         icon=ft.icons.FILE_OPEN,
         on_click=lambda _: [
@@ -52,63 +52,35 @@ def QuestionPage(page: ft.Page):
     page.overlay.append(hf)
 
     async def on_confirm_upload(e):
-        submit_button.current.disabled = True
-        select_file_button.current.disabled = True
-
-        # Inicializa o timer
-        elapsed_time = 0
-        submit_button.current.content = ft.Row(
-            controls=[
-                ft.ProgressRing(width=16, height=16, stroke_width=2),
-                ft.Text(f"Processando... {elapsed_time}s"),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-        )
-        submit_button.current.update()
-
-        async def atualizar_timer():
-            nonlocal elapsed_time
-            while True:
-                await asyncio.sleep(1)
-                elapsed_time += 1
-                submit_button.current.text = f"Processando... {elapsed_time}s"
-                submit_button.current.update()
-
-        # Inicia a tarefa de atualização do timer
-        timer_task = asyncio.create_task(atualizar_timer())
-
+        submit_button_rf.current.disabled = True
+        select_file_button_rf.current.visible = False
+        submit_button_rf.current.text = "Processando..."
+        select_file_button_rf.current.update()
+        submit_button_rf.current.update()
         try:
             await processar_upload(page)
         except Exception as e:
             if page.platform == "WINDOWS":
-                show_notification(page, f"Erro ao processar upload: {e}", icon_path)
-            elif page.platform in ["ANDROID", "IOS"]:
+                show_notification(page, "Erro ao processar upload{e}", icon_path)
+            elif page.platform == "ANDROID" or page.platform == "IOS":
                 hf.heavy_impact()
                 page.snack_bar = ft.SnackBar(
-                    content=ft.Text(f"Erro ao processar upload: {e}"),
+                    content=ft.Text(f"Erro ao processar upload{e}"),
                     bgcolor=ft.colors.AMBER_400,
                 )
             page.snack_bar.open = True
             page.update()
             print(f"Erro ao processar upload: {e}")
-        finally:
-            # Cancela a tarefa do timer
-            timer_task.cancel()
-            try:
-                await timer_task
-            except asyncio.CancelledError:
-                pass
+            return
+        submit_button_rf.current.disabled = False
+        select_file_button_rf.current.visible = True
+        submit_button_rf.current.text = "Executar"
+        submit_button_rf.current.update()
+        select_file_button_rf.current.update()
+        page.go("/quiz")
 
-            # Habilita os botões novamente
-            submit_button.current.disabled = False
-            select_file_button.current.disabled = False
-            submit_button.current.content = ft.Text("Executar")
-            select_file_button.current.update()
-            submit_button.current.update()
-            page.go("/quiz")
-
-    submit_button_control = ft.ElevatedButton(
-        ref=submit_button,
+    submit_button_rf_control = ft.ElevatedButton(
+        ref=submit_button_rf,
         text="Executar",
         icon=ft.icons.PLAY_CIRCLE_FILL,
         on_click=on_confirm_upload,
@@ -175,7 +147,7 @@ def QuestionPage(page: ft.Page):
                             col={"sm": 12, "md": 6, "xl": 4},
                         ),
                         ft.Container(
-                            submit_button_control,
+                            submit_button_rf_control,
                             padding=5,
                             col={"sm": 12, "md": 6, "xl": 4},
                         ),

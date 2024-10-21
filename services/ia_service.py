@@ -48,12 +48,12 @@ def gerar_perguntas(video_path):
     wait_for_files_active(files)
 
     chat_session = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-pro",
         generation_config={
             "temperature": 0.7,
             "max_output_tokens": 2048,
             "response_mime_type": "text/plain",
-        }
+        },
     ).start_chat(
         history=[
             {
@@ -67,8 +67,7 @@ def gerar_perguntas(video_path):
                 "parts": [
                     "Por favor, analise o vídeo fornecido e crie **5 perguntas de múltipla escolha**, cada uma com **5 opções**, baseadas no conteúdo do vídeo. As perguntas devem seguir o estilo de exames de vestibulares, sendo bem estruturadas e desafiadoras. Certifique-se de que as perguntas cobrem diferentes aspectos importantes do vídeo, como personagens, eventos, conceitos discutidos e detalhes visuais.\n\n**Para cada pergunta, siga rigorosamente o seguinte formato:**\n\n**n. Pergunta**\na) Opção A\nb) Opção B\nc) Opção C\nd) Opção D\ne) Opção E\n**Resposta Correta:** (apenas a letra da opção correta, por exemplo, 'a', 'b', 'c', 'd' ou 'e')\n**Explicação:** (forneça uma explicação detalhada sobre por que a resposta está correta e por que as outras opções estão incorretas)\n**Dica:** (forneça uma dica que ajude o usuário a entender melhor o conteúdo relacionado à pergunta)\n\n**Certifique-se de que as explicações e dicas sejam claras e informativas.**"
                 ],
-            }
-
+            },
         ]
     )
 
@@ -79,3 +78,4 @@ def gerar_perguntas(video_path):
     print("Resposta da IA em formato texto:\n", perguntas_geradas)
 
     return perguntas_geradas
+

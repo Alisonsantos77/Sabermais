@@ -2,7 +2,6 @@ from loguru import logger
 import flet as ft
 from routes import setup_routes
 from utils.theme_utils import DarkVideoQTheme, RelaxVideoQTheme
-from utils.notifications import show_notification, icon_path
 
 
 def toggle_theme(page: ft.Page, theme_mode: ft.ThemeMode):
@@ -23,7 +22,6 @@ logger.add("logs/app.log", format="{time} {level} {message}",
 
 def main(page: ft.Page):
     logger.info("saber+ iniciado")
-    show_notification(page, "Título da Notificação", "Mensagem da notificação", icon_path)
 
     theme_mode_value = page.client_storage.get("theme_mode")
     if theme_mode_value:
