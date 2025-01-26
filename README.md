@@ -2,6 +2,9 @@
 
 **Saber+** é uma aplicação desenvolvida em **Flet Python** para ajudar estudantes a otimizar seus estudos para o vestibular e outras avaliações. A aplicação analisa videoaulas e gera questionários completos no estilo vestibular, incluindo perguntas desafiadoras, opções de resposta, explicações e dicas.
 
+![Saber+](https://github.com/Alisonsantos77/Sabermais/blob/main/sabermais_capa.PNG)
+
+
 ## 🚀 Funcionalidades
 
 1. **Upload de Videoaulas**
